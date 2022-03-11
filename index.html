@@ -1,0 +1,46 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css?family=IBM+Plex+Sans:400,400i,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.min.css">
+    <link rel="stylesheet" href="./assets/css/style.css">
+    <title>Weather Dashboard</title>
+</head>
+
+<body>
+    <body class="flex-column min-100-vh">
+        <header class="hero">
+          <h1 class="app-title"> Weather Dashboard</h1>
+        </header>
+      
+        <main class="flex-row justify-space-between">
+            <div class="col-12 col-md-4">
+            <!-- prompt user to enter request -->
+              <div class="card">
+                <h3 class="card-header text-uppercase">Search By City Name</h3>
+                <form id="city-form"        class="card-body">
+                  <label class="form-label" for="cityname"></label>
+                  <input name="cityname" id="cityname" type="text" autofocus="true" class="form-input" placeholder="Hartford"/>
+                  <button type="submit"
+                  class="btn">Search</button>
+                </form>
+              </div>
+            </div>
+            <!-- render user request -->
+            <div class="col-12 col-md-8">
+              <h2 class="subtitle">Current Weather Info for: <span id="weather-data-search"></span></h2>
+              <div id="weather-data-container" class="list-group">
+        
+              </div>
+            </div>
+          </main>
+
+
+<script src="./assets/js/script.js"></script> 
+</body>
+</html>
