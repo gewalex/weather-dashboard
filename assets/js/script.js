@@ -3,7 +3,7 @@ var cityFormEl = document.querySelector('#city-form');
 var nameInputEl = document.querySelector('#cityname');
 var weatherDataContainerEl = document.querySelector('#weather-data-container');
 var weatherDataSearchTerm = document.querySelector('#weather-data-search');
-
+var city;
 var formSubmitHandler = function(event) {
   // prevent page from refreshing
   event.preventDefault();
@@ -34,10 +34,10 @@ var getCityNameWeatherData = function(city) {
         console.log(response);
         return response.json().then(function(data) {
           console.log(data); 
-          displayRepos(data, city);
+          displayCurrentWeatherData(data, city);
           //object return for current weather
-          var latitudeValue = data['coord']['lon'];
-          var longitudeValue = data['coord']['lat'] ;
+          var latitudeValue = data['coord']['lat'];
+          var longitudeValue = data['coord']['lon'] ;
           console.log("latitudeValue:"+latitudeValue, "longitudeValue:"+longitudeValue);
 
           getLatitudeAndLongitude(latitudeValue, longitudeValue); 
@@ -60,10 +60,11 @@ var getLatitudeAndLongitude = function(latitudeValue, longitudeValue){
         .then(function(response) {
           // request was successful
           if (response.ok) {
-            console.log("response:"+ response.json());
+           // console.log("response:"+ response.json());
             return response.json().then(function(data) {
-              console.log("data:"+data); 
-              //displayRepos(data, user);
+             // console.log("data:"+data);
+              console.log(data); 
+              displayFuturetWeatherData(data, city);
             });
 
           } 
@@ -75,10 +76,10 @@ var getLatitudeAndLongitude = function(latitudeValue, longitudeValue){
       };
 
 
-var displayRepos = function(weatherData, searchTerm) {
+var displayCurrentWeatherData = function(weatherData, searchTerm) {
   //check if api returned any weather data
   if (weatherData === 0) {
-    weatherDataContainerEl.textContent = 'No repositories found.';
+    weatherDataContainerEl.textContent = 'No weater data found.';
     return;
   }
 
@@ -87,13 +88,19 @@ var displayRepos = function(weatherData, searchTerm) {
     var temperatureValue = weatherData['main']['temp'];
     var humidityValue= weatherData['main']['humidity'];
     var speedValue = weatherData['wind']['speed'];
+    var timeInSecondValue = weatherData['dt'];
+    var dateValue = moment(timeInSecondValue).format("L");
+    // "<div>"+ date + "</div>" 
+    // array of objects returned from api for 5 days after current day 
 
-   // var latitudeValue =  weatherData['coord']['lon'];
-   //var longitudeValue = weatherData['coord']['lat'] ;
+   // var latitudeValue =  weatherData['coord']['lat'];
+   //var longitudeValue = weatherData['coord']['lon'] ;
     //array object returned
+
+    //CITY AN DATE
     var icon =  weatherData['weather'][0]['icon'];
     //display current weather info as div block element
-    var currentWeatherInfo = " <div> Temperature: " + temperatureValue +"&#8457;" + "</div>"  
+    var currentWeatherInfo =  "<div>"+ dateValue + "</div>"+" <div> Temperature: " + temperatureValue +"&#8457;" + "</div>"  
                   + "<div> Wind Speed: " + speedValue + " MPH" + "</div>"
                   + "<div> Humidity: " + humidityValue + " %" + "</div>";
    
@@ -101,9 +108,9 @@ var displayRepos = function(weatherData, searchTerm) {
     var weatherDataEl = document.createElement('div');
 
     weatherDataEl.classList = 'list-item flex-row justify-space-between align-center';
-    // create a span element to hold repository name
+    // create a span element to hold City name
     var titleEl = document.createElement('span');
-    //titleEl.textContent = repoNameTemp;
+    
     titleEl.innerHTML = currentWeatherInfo;
     // append to container
     weatherDataEl.appendChild(titleEl);
@@ -125,6 +132,59 @@ var displayRepos = function(weatherData, searchTerm) {
     weatherDataContainerEl.appendChild(weatherDataEl);
   };
 
+
+  var displayFuturetWeatherData = function(weatherData, searchTerm) {
+  //check if api returned any weather data
+  if (weatherData.length === 0) {
+    weatherDataContainerEl.textContent = 'No weater data found.';
+    return;
+  }
+  weatherDataSearchTerm.textContent = searchTerm;
+  // loop over weather data
+  for (var i = 0; i < weatherData.length; i++) {
+    // format repo name
+
+    var temperatureVal = weatherData[i].temp;
+    var humidityVal= weatherData[i].humidity;
+    var speedVal = weatherData[i].wind_speed;
+    var timeInSecondVal = weatherData[i].dt;
+    var iconVal =  weatherData.weather[i].icon;
+
+    var dateVal = moment(timeInSecondVal).format("L");
+
+    //display current weather info as div block element
+    var futureWeatherInfo =  "<div>"+ dateVal + "</div>"+" <div> Temperature: " + temperatureVal +"&#8457;" + "</div>"  
+                  + "<div> Wind Speed: " + speedVal + " MPH" + "</div>"
+                  + "<div> Humidity: " + humidityVal + " %" + "</div>";
+   
+    // create a container for weather data
+    var weatherDataEl = document.createElement('div');
+
+    weatherDataEl.classList = 'list-item flex-row justify-space-between align-center';
+    // create a span element to hold City name
+    var titleEl = document.createElement('span');
+    
+    titleEl.innerHTML = futureWeatherInfo;
+    // append to container
+    weatherDataEl.appendChild(titleEl);
+
+   
+    // create a status element
+    var statusEl = document.createElement('span');
+    statusEl.classList = 'flex-row align-center';
+    
+      let imgIconVal = document.createElement('img'); 
+      imgIconVal.setAttribute('src', `https://openweathermap.org/img/wn/${iconVal}@2x.png`)
+  
+      statusEl.appendChild(imgIconVal); 
+
+    // append to container
+    weatherDataEl.appendChild(statusEl);
+
+    // append container to the dom
+    weatherDataContainerEl.appendChild(weatherDataEl);
+  }
+};
 
 // add event listeners to forms
 cityFormEl.addEventListener('submit', formSubmitHandler);
